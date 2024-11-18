@@ -2,37 +2,43 @@ pipeline {
     agent any
 
     stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
         stage('Restore') {
             steps {
                 echo 'Restoring dependencies...'
-                sh 'dotnet restore'
+                bat 'dotnet restore' // Use `bat` instead of `sh` for Windows compatibility
             }
         }
 
         stage('Build') {
             steps {
                 echo 'Building the project...'
-                sh 'dotnet build --no-restore'
+                bat 'dotnet build --no-restore'
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                sh 'dotnet test --no-build --verbosity normal'
+                bat 'dotnet test --no-build --verbosity normal'
             }
         }
     }
 
     post {
         always {
-            echo 'Pipeline completed!'
+            echo 'Cleaning up...'
         }
         success {
-            echo 'Pipeline executed successfully!'
+            echo 'Pipeline succeeded!'
         }
         failure {
-            echo 'Pipeline failed. Check the logs for more details.'
+            echo 'Pipeline failed!'
         }
     }
 }
